@@ -9,7 +9,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import static com.example.androidapp.utils.NetworkUtils.generateURL;
+import static com.example.androidapp.utils.NetworkUtils.getResponseFromUrl;
 
+import java.io.IOException;
 import java.net.URL;
 
 public class MainActivity extends AppCompatActivity {
@@ -31,7 +33,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 URL generatedURL = generateURL(searchField.getText().toString());
-                result.setText(generatedURL.toString());
+                String response = null;
+                try {
+                    response = getResponseFromUrl(generatedURL);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                result.setText(response);
+
             }
         };
 

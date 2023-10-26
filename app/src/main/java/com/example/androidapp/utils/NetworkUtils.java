@@ -14,12 +14,14 @@ public class NetworkUtils {
     private static final String VK_USERS_GET = "/ru/method/users.get";
     private static final String PARAM_USER_ID = "user_ids";
     private static final String PARAM_VERSION = "v";
+    private static final String ACCESS_TOKEN = "access_token";
 
     public static URL generateURL(String userId) {
         Uri builtUri = Uri.parse( VK_BASE_API_URL + VK_USERS_GET)
                 .buildUpon()
                 .appendQueryParameter(PARAM_USER_ID, userId)
-                .appendQueryParameter(PARAM_VERSION, "5.8")
+                .appendQueryParameter(PARAM_VERSION, "5.154")
+                .appendQueryParameter(ACCESS_TOKEN, "c0e48ff9c0e48ff9c0e48ff90dc3f297c1cc0e4c0e48ff9a5de62edb5919388a809bf17")
                 .build();
         URL url = null;
         try {

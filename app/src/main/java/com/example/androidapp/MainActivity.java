@@ -2,6 +2,7 @@ package com.example.androidapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -13,12 +14,32 @@ import static com.example.androidapp.utils.NetworkUtils.getResponseFromUrl;
 
 import java.io.IOException;
 import java.net.URL;
+import java.nio.channels.AsynchronousChannelGroup;
 
 public class MainActivity extends AppCompatActivity {
 
     private EditText searchField;
     private Button searchButton;
     private TextView result;
+
+    class VkQueryTask extends AsyncTask<URL, Void, String> {
+
+        @Override
+        protected String doInBackground(URL... urls) {
+            String response = null;
+            try {
+                response = getResponseFromUrl(urls[0]);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return response;
+        }
+
+        @Override
+        protected void onPostExecute(String response) {
+            result.setText(response);
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,13 +54,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 URL generatedURL = generateURL(searchField.getText().toString());
-                String response = null;
-                try {
-                    response = getResponseFromUrl(generatedURL);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                result.setText(response);
+
+                new VkQueryTask().execute(generatedURL);
 
             }
         };

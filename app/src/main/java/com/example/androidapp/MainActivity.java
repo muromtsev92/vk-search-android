@@ -8,6 +8,7 @@ import android.text.Html;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import static com.example.androidapp.utils.NetworkUtils.generateURL;
@@ -26,8 +27,26 @@ public class MainActivity extends AppCompatActivity {
     private EditText searchField;
     private Button searchButton;
     private TextView result;
+    private TextView errorMessage;
+    private ProgressBar loadingIndicator;
+
+    private void showResultTextView() {
+        result.setVisibility(View.VISIBLE);
+        errorMessage.setVisibility(View.INVISIBLE);
+    }
+
+    private void showErrorTextView() {
+        errorMessage.setVisibility(View.VISIBLE);
+        result.setVisibility(View.INVISIBLE);
+
+    }
 
     class VkQueryTask extends AsyncTask<URL, Void, String> {
+
+        @Override
+        protected void onPreExecute(){
+            loadingIndicator.setVisibility(View.VISIBLE);
+        }
 
         @Override
         protected String doInBackground(URL... urls) {
@@ -46,21 +65,27 @@ public class MainActivity extends AppCompatActivity {
             String firstName = null;
             String lastName = null;
 
-            try {
-                JSONObject jsonObject = new JSONObject(response);
-                JSONArray jsonArray = jsonObject.getJSONArray("response");
-                JSONObject userInfo = jsonArray.getJSONObject(0);
+            if(response != null && !response.equals("")){
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+                    JSONArray jsonArray = jsonObject.getJSONArray("response");
+                    JSONObject userInfo = jsonArray.getJSONObject(0);
 
-                id = userInfo.getString("id");
-                firstName = userInfo.getString("first_name");
-                lastName = userInfo.getString("last_name");
-            } catch (JSONException e) {
-                throw new RuntimeException(e);
+                    id = userInfo.getString("id");
+                    firstName = userInfo.getString("first_name");
+                    lastName = userInfo.getString("last_name");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                String summary = "Id: " + id + "\n" + "Name: " + firstName + "\n" + "Last Name: " + lastName + "\n";
+
+                result.setText(summary);
+
+                showResultTextView();
+            } else {
+                showErrorTextView();
             }
-
-            String summary = "Id: " + id + "\n" + "Name: " + firstName + "\n" + "Last Name: " + lastName + "\n";
-
-            result.setText(summary);
+            loadingIndicator.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -72,6 +97,8 @@ public class MainActivity extends AppCompatActivity {
         searchField = findViewById(R.id.et_search_field);
         searchButton = findViewById(R.id.b_search_vk);
         result = findViewById(R.id.tv_result);
+        errorMessage = findViewById(R.id.tv_error_message);
+        loadingIndicator = findViewById(R.id.pb_loading_indicator);
 
         View.OnClickListener onClickListener = new View.OnClickListener() {
             @Override

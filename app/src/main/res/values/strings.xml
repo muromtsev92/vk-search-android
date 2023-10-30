@@ -1,7 +1,9 @@
 <resources>
-    <string name="app_name">AndroidApp</string>
+    <string name="app_name">Vk search</string>
     <string name="place_for_the_list">Place for the list</string>
     <string name="enter_vk_id">enter vk id</string>
     <string name="search">Search</string>
     <string name="result_will_be_here">result will be here</string>
+    <string name="tv_error_message">Wrong Id ot something else</string>
+    <string name="error_message">something went wrong</string>
 </resources>

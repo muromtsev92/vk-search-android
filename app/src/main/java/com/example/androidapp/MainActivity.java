@@ -13,6 +13,10 @@ import android.widget.TextView;
 import static com.example.androidapp.utils.NetworkUtils.generateURL;
 import static com.example.androidapp.utils.NetworkUtils.getResponseFromUrl;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.net.URL;
 import java.nio.channels.AsynchronousChannelGroup;
@@ -38,7 +42,25 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String response) {
-            result.setText(response);
+            String id = null;
+            String firstName = null;
+            String lastName = null;
+
+            try {
+                JSONObject jsonObject = new JSONObject(response);
+                JSONArray jsonArray = jsonObject.getJSONArray("response");
+                JSONObject userInfo = jsonArray.getJSONObject(0);
+
+                id = userInfo.getString("id");
+                firstName = userInfo.getString("first_name");
+                lastName = userInfo.getString("last_name");
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+
+            String summary = "Id: " + id + "\n" + "Name: " + firstName + "\n" + "Last Name: " + lastName + "\n";
+
+            result.setText(summary);
         }
     }
 
@@ -57,7 +79,6 @@ public class MainActivity extends AppCompatActivity {
                 URL generatedURL = generateURL(searchField.getText().toString());
 
                 new VkQueryTask().execute(generatedURL);
-
             }
         };
 
